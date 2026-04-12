@@ -7,6 +7,7 @@ import '../bloc/home_state.dart';
 import '../widgets/product_card.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_state.dart';
+import '../../cart/screens/cart_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -28,7 +29,10 @@ class HomeScreen extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.shopping_cart),
                       onPressed: () {
-                        // Will navigate to CartScreen later
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
+                        );
                       },
                     ),
                     if (state.totalItems > 0)

@@ -7,19 +7,48 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   CartBloc() : super(CartInitial()) {
     on<AddToCart>(_onAddToCart);
     on<RemoveFromCart>(_onRemoveFromCart);
+    on<IncreaseQuantity>(_onIncreaseQuantity);
+    on<DecreaseQuantity>(_onDecreaseQuantity);
+    on<ClearCart>(_onClearCart);
+  }
+
+  void _onClearCart(ClearCart event, Emitter<CartState> emit) {
+    emit(const CartUpdated(items: []));
   }
 
   void _onAddToCart(AddToCart event, Emitter<CartState> emit) {
+    _handleQuantityIncrease(event.product, emit);
+  }
+
+  void _onIncreaseQuantity(IncreaseQuantity event, Emitter<CartState> emit) {
+    _handleQuantityIncrease(event.product, emit);
+  }
+
+  void _handleQuantityIncrease(product, Emitter<CartState> emit) {
     final List<CartItemModel> currentItems = List.from(state.items);
-    final existingIndex = currentItems.indexWhere((item) => item.product.id == event.product.id);
+    final existingIndex = currentItems.indexWhere((item) => item.product.id == product.id);
 
     if (existingIndex != -1) {
       final existingItem = currentItems[existingIndex];
       currentItems[existingIndex] = existingItem.copyWith(quantity: existingItem.quantity + 1);
     } else {
-      currentItems.add(CartItemModel(product: event.product));
+      currentItems.add(CartItemModel(product: product));
     }
+    emit(CartUpdated(items: currentItems));
+  }
 
+  void _onDecreaseQuantity(DecreaseQuantity event, Emitter<CartState> emit) {
+    final List<CartItemModel> currentItems = List.from(state.items);
+    final existingIndex = currentItems.indexWhere((item) => item.product.id == event.product.id);
+
+    if (existingIndex != -1) {
+      final existingItem = currentItems[existingIndex];
+      if (existingItem.quantity > 1) {
+        currentItems[existingIndex] = existingItem.copyWith(quantity: existingItem.quantity - 1);
+      } else {
+        currentItems.removeAt(existingIndex); // Item quantity is 0 - dynamically removed!
+      }
+    }
     emit(CartUpdated(items: currentItems));
   }
 
