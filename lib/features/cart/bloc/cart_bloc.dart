@@ -10,6 +10,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<IncreaseQuantity>(_onIncreaseQuantity);
     on<DecreaseQuantity>(_onDecreaseQuantity);
     on<ClearCart>(_onClearCart);
+    on<RestoreCartItem>(_onRestoreCartItem);
+  }
+
+  void _onRestoreCartItem(RestoreCartItem event, Emitter<CartState> emit) {
+    final List<CartItemModel> currentItems = List.from(state.items);
+    // Enforces block to prevent double-click async spamming duplicates natively
+    if (!currentItems.any((item) => item.product.id == event.cartItem.product.id)) {
+      currentItems.add(event.cartItem);
+    }
+    emit(CartUpdated(items: currentItems));
   }
 
   void _onClearCart(ClearCart event, Emitter<CartState> emit) {
