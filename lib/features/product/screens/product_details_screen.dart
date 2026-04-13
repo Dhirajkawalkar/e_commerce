@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
 import '../domain/entities/product.dart';
+import '../../../core/constants/app_colors.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -56,9 +57,9 @@ class ProductDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '\$${product.price.toStringAsFixed(2)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 22,
-                      color: Colors.green[700],
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -126,8 +127,8 @@ class ProductDetailsScreen extends StatelessWidget {
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    side: const BorderSide(color: AppColors.primary, width: 1.5),
+                    shape: const StadiumBorder(),
                   ),
                   child: const Text('Add to Cart', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
@@ -148,8 +149,10 @@ class ProductDetailsScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.surface,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: const StadiumBorder(),
                   ),
                   child: const Text('Buy Now', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),

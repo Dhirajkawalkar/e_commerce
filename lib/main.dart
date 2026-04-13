@@ -23,7 +23,13 @@ class ECommerceApp extends StatelessWidget {
       child: MaterialApp(
         title: 'E-Commerce App',
         theme: ThemeData(
+          scaffoldBackgroundColor: AppColors.background,
+          cardColor: AppColors.surface,
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+          textTheme: const TextTheme(
+            bodyMedium: TextStyle(color: AppColors.textPrimary),
+            bodySmall: TextStyle(color: AppColors.textSecondary),
+          ),
           useMaterial3: true,
         ),
         home: const HomeScreen(),

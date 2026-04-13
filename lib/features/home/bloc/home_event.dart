@@ -8,3 +8,12 @@ abstract class HomeEvent extends Equatable {
 }
 
 class LoadHomeData extends HomeEvent {}
+
+class ChangeCategory extends HomeEvent {
+  final String category;
+  
+  const ChangeCategory(this.category);
+
+  @override
+  List<Object?> get props => [category];
+}
