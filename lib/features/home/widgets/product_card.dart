@@ -4,6 +4,7 @@ import '../../product/domain/entities/product.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
 import '../../product/screens/product_details_screen.dart';
+import '../../../core/constants/app_colors.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -14,18 +15,30 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surface,
+        // High variance Squircle Border geometry natively mapping layout boundaries 
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(24),
+        ),
         boxShadow: [
+          // Ambient Float mapping 0.08 alpha / 40 Radius precisely
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 40,
+            offset: Offset.zero,
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(8),
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(24),
+        ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -40,7 +53,6 @@ class ProductCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top: Clean 1:1 Ratio Cover Image Layout
                 AspectRatio(
                   aspectRatio: 1,
                   child: Hero(
@@ -49,18 +61,18 @@ class ProductCard extends StatelessWidget {
                       product.imageUrl,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[200],
+                        color: AppColors.background,
                         child: const Center(
-                          child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                          child: Icon(Icons.broken_image, size: 40, color: AppColors.textSecondary),
                         ),
                       ),
                     ),
                   ),
                 ),
-                // Bottom: Expanding Flexible Info Display Container
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    // Strictly adhered to 8pt constraint maps
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -70,7 +82,8 @@ class ProductCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
                             height: 1.2,
                           ),
                         ),
@@ -88,22 +101,22 @@ class ProductCard extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       product.rating.toString(),
-                                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 4),
+                                // 8pt padding grid 
+                                const SizedBox(height: 8),
                                 Text(
                                   '\$${product.price.toStringAsFixed(2)}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.green[700],
+                                    color: AppColors.primary, // Brand constraint applied natively
                                   ),
                                 ),
                               ],
                             ),
-                            // Quick Add to Cart Button mapped autonomously from styling mechanics
                             InkWell(
                               onTap: () {
                                 context.read<CartBloc>().add(AddToCart(product: product));
@@ -116,14 +129,14 @@ class ProductCard extends StatelessWidget {
                                   ),
                                 );
                               },
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(24),
                               child: Container(
                                 padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
-                                  shape: BoxShape.circle,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primary,
+                                  shape: BoxShape.circle, // Fully Pill rounded CTA
                                 ),
-                                child: const Icon(Icons.add, color: Colors.white, size: 20),
+                                child: const Icon(Icons.add, color: AppColors.surface, size: 20),
                               ),
                             ),
                           ],
