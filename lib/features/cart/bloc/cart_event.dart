@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import '../../product/domain/entities/product.dart';
-import '../models/cart_item_model.dart';
 
 abstract class CartEvent extends Equatable {
   const CartEvent();
@@ -43,9 +42,8 @@ class ClearCart extends CartEvent {
   List<Object?> get props => [];
 }
 
-class RestoreCartItem extends CartEvent {
-  final CartItemModel cartItem;
-  const RestoreCartItem({required this.cartItem});
+class UndoRemove extends CartEvent {
+  const UndoRemove();
   @override
-  List<Object?> get props => [cartItem];
+  List<Object?> get props => [];
 }

@@ -9,23 +9,20 @@ class CartItemWidget extends StatelessWidget {
 
   const CartItemWidget({super.key, required this.cartItem});
 
-  void _showUndoSnackbar(BuildContext context, CartItemModel itemToRestore) {
-    // CRITICAL FIX: Capture the Bloc reference safely BEFORE the Widget is destroyed
-    // so the SnackBar action isn't referencing a dead unmounted context!
+  void _showUndoSnackbar(BuildContext context) {
     final cartBloc = context.read<CartBloc>();
 
-    // Quickly override previous active snackbars to prevent queue stacking latency
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Item removed'),
         duration: const Duration(seconds: 3),
-        behavior: SnackBarBehavior.floating, // Sleeker UI padding
+        behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: 'UNDO',
           onPressed: () {
-            // Utilize the captured bloc reference directly avoiding lookup errors on dismissed widgets
-            cartBloc.add(RestoreCartItem(cartItem: itemToRestore));
+            // UI purely triggers empty Undo event natively; Bloc handles structural restoration completely decoupled
+            cartBloc.add(const UndoRemove());
           },
         ),
       ),
@@ -36,9 +33,9 @@ class CartItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = cartItem.product;
     
-    // Wrapped internally inside Dismissible natively allowing fluid UX swipe-delete motions
     return Dismissible(
-      key: Key(product.id.toString()),
+      // ValueKey properly implements clean UI animation cycles explicitly!
+      key: ValueKey(product.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -52,7 +49,7 @@ class CartItemWidget extends StatelessWidget {
       ),
       onDismissed: (direction) {
         context.read<CartBloc>().add(RemoveFromCart(product: product));
-        _showUndoSnackbar(context, cartItem);
+        _showUndoSnackbar(context);
       },
       child: Card(
         elevation: 1.0,
@@ -111,9 +108,8 @@ class CartItemWidget extends StatelessWidget {
                     icon: const Icon(Icons.remove_circle_outline),
                     color: Theme.of(context).primaryColor,
                     onPressed: () {
-                      // Trip UNDO logic instantly if manual decrement causes threshold removal 
                       if (cartItem.quantity == 1) {
-                        _showUndoSnackbar(context, cartItem);
+                        _showUndoSnackbar(context);
                       }
                       context.read<CartBloc>().add(DecreaseQuantity(product: product));
                     },
