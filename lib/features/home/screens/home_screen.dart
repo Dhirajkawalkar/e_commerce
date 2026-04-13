@@ -93,8 +93,14 @@ class HomeScreen extends StatelessWidget {
                 );
               }
 
-              return ListView.builder(
+              return GridView.builder(
                 padding: const EdgeInsets.all(16.0),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.7,
+                  crossAxisSpacing: 16.0,
+                  mainAxisSpacing: 16.0,
+                ),
                 itemCount: state.products.length,
                 itemBuilder: (context, index) {
                   final product = state.products[index];
