@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../product/domain/entities/product.dart';
 import '../models/cart_item_model.dart';
 import 'cart_event.dart';
 import 'cart_state.dart';
@@ -48,7 +49,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     _handleQuantityIncrease(event.product, emit);
   }
 
-  void _handleQuantityIncrease(product, Emitter<CartState> emit) {
+  void _handleQuantityIncrease(Product product, Emitter<CartState> emit) {
     final List<CartItemModel> currentItems = List.from(state.items);
     final existingIndex = currentItems.indexWhere((item) => item.product.id == product.id);
 

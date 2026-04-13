@@ -18,8 +18,13 @@ class HomeScreen extends StatelessWidget {
       create: (context) => sl<HomeBloc>()..add(LoadHomeData()),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('E-Commerce Shop'),
+          title: const Text(
+            'E-Commerce Shop',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
+          elevation: 2,
+          shadowColor: Colors.black.withValues(alpha: 0.2),
           actions: [
             BlocBuilder<CartBloc, CartState>(
               builder: (context, state) {
