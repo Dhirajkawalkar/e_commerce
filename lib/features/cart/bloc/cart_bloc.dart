@@ -4,25 +4,39 @@ import 'cart_event.dart';
 import 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
+  CartItemModel? _lastRemovedItem;
+  int? _lastRemovedIndex;
+
   CartBloc() : super(CartInitial()) {
     on<AddToCart>(_onAddToCart);
     on<RemoveFromCart>(_onRemoveFromCart);
     on<IncreaseQuantity>(_onIncreaseQuantity);
     on<DecreaseQuantity>(_onDecreaseQuantity);
     on<ClearCart>(_onClearCart);
-    on<RestoreCartItem>(_onRestoreCartItem);
+    on<UndoRemove>(_onUndoRemove);
   }
 
-  void _onRestoreCartItem(RestoreCartItem event, Emitter<CartState> emit) {
+  void _onUndoRemove(UndoRemove event, Emitter<CartState> emit) {
+    if (_lastRemovedItem == null || _lastRemovedIndex == null) return;
+    
     final List<CartItemModel> currentItems = List.from(state.items);
-    // Enforces block to prevent double-click async spamming duplicates natively
-    if (!currentItems.any((item) => item.product.id == event.cartItem.product.id)) {
-      currentItems.add(event.cartItem);
+    
+    // Duplicate Restore Protect: Check ID against active cart
+    if (!currentItems.any((item) => item.product.id == _lastRemovedItem!.product.id)) {
+      // Smart Position Recovery: Securely inserts safely within correct index bounds
+      final insertIndex = _lastRemovedIndex! <= currentItems.length ? _lastRemovedIndex! : currentItems.length;
+      currentItems.insert(insertIndex, _lastRemovedItem!);
     }
+    
+    // Scour memory
+    _lastRemovedItem = null;
+    _lastRemovedIndex = null;
     emit(CartUpdated(items: currentItems));
   }
 
   void _onClearCart(ClearCart event, Emitter<CartState> emit) {
+    _lastRemovedItem = null;
+    _lastRemovedIndex = null;
     emit(const CartUpdated(items: []));
   }
 
@@ -56,7 +70,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       if (existingItem.quantity > 1) {
         currentItems[existingIndex] = existingItem.copyWith(quantity: existingItem.quantity - 1);
       } else {
-        currentItems.removeAt(existingIndex); // Item quantity is 0 - dynamically removed!
+        // Caching location coordinates and object state silently pre-deletion
+        _lastRemovedItem = existingItem;
+        _lastRemovedIndex = existingIndex;
+        currentItems.removeAt(existingIndex);
       }
     }
     emit(CartUpdated(items: currentItems));
@@ -64,7 +81,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onRemoveFromCart(RemoveFromCart event, Emitter<CartState> emit) {
     final List<CartItemModel> currentItems = List.from(state.items);
-    currentItems.removeWhere((item) => item.product.id == event.product.id);
+    final existingIndex = currentItems.indexWhere((item) => item.product.id == event.product.id);
+    
+    if (existingIndex != -1) {
+      // Caching location coordinates and object state silently pre-deletion
+      _lastRemovedItem = currentItems[existingIndex];
+      _lastRemovedIndex = existingIndex;
+      currentItems.removeAt(existingIndex);
+    }
     emit(CartUpdated(items: currentItems));
   }
 }
