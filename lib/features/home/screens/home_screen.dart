@@ -98,19 +98,26 @@ class HomeScreen extends StatelessWidget {
                 );
               }
 
-              return GridView.builder(
-                padding: const EdgeInsets.all(16.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.7,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                ),
-                itemCount: state.products.length,
-                itemBuilder: (context, index) {
-                  final product = state.products[index];
-                  return ProductCard(product: product);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  // Direct explicit event polling decoupling fetching rules strictly out of presentation scopes natively
+                  context.read<HomeBloc>().add(LoadHomeData());
                 },
+                child: GridView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(), // Hard-locks scrolling boundaries assuring tiny collections still drag effectively
+                  padding: const EdgeInsets.all(16.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.7,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  itemCount: state.products.length,
+                  itemBuilder: (context, index) {
+                    final product = state.products[index];
+                    return ProductCard(product: product);
+                  },
+                ),
               );
             }
             return const SizedBox.shrink();

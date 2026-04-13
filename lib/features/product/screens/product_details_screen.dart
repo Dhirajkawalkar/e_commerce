@@ -24,14 +24,17 @@ class ProductDetailsScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: 250,
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stack) => Container(
-                  height: 250,
-                  color: Colors.grey[200],
-                  child: const Center(
-                    child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+              child: Hero(
+                tag: 'product_image_${product.id}',
+                child: Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stack) => Container(
+                    height: 250,
+                    color: Colors.grey[200],
+                    child: const Center(
+                      child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                    ),
                   ),
                 ),
               ),

@@ -43,13 +43,16 @@ class ProductCard extends StatelessWidget {
                 // Top: Clean 1:1 Ratio Cover Image Layout
                 AspectRatio(
                   aspectRatio: 1,
-                  child: Image.network(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                  child: Hero(
+                    tag: 'product_image_${product.id}',
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
