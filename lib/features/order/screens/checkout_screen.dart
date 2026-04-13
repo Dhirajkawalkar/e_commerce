@@ -31,12 +31,20 @@ class CheckoutScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Card(
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: const Row(
                       children: [
                         Icon(Icons.location_on, color: Colors.blue),
                         SizedBox(width: 8),
@@ -48,7 +56,6 @@ class CheckoutScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                  ),
                 ),
                 const SizedBox(height: 24),
                 const Text(
@@ -82,7 +89,7 @@ class CheckoutScreen extends StatelessWidget {
                     ),
                     Text(
                       '\$${state.totalPrice.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
                     ),
                   ],
                 ),

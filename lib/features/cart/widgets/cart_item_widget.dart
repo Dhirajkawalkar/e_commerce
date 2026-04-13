@@ -63,12 +63,12 @@ class CartItemWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
                   product.imageUrl,
-                  height: 80,
-                  width: 80,
+                  height: 100,
+                  width: 100,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    height: 80,
-                    width: 80,
+                    height: 100,
+                    width: 100,
                     color: Colors.grey[200],
                     child: const Center(
                       child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
@@ -95,7 +95,7 @@ class CartItemWidget extends StatelessWidget {
                       '\$${product.price.toStringAsFixed(2)}',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Theme.of(context).primaryColor,
+                        color: Colors.green[700],
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -114,10 +114,12 @@ class CartItemWidget extends StatelessWidget {
                       context.read<CartBloc>().add(DecreaseQuantity(product: product));
                     },
                   ),
+                  const SizedBox(width: 4),
                   Text(
                     '${cartItem.quantity}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(width: 4),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
                     color: Theme.of(context).primaryColor,
