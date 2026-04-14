@@ -67,7 +67,7 @@ class CartScreen extends StatelessWidget {
                   color: Theme.of(context).cardColor,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withAlpha(13),
                       offset: const Offset(0, -4),
                       blurRadius: 8,
                     ),
