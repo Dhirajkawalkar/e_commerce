@@ -15,18 +15,29 @@ class HomeLoading extends HomeState {}
 class HomeLoaded extends HomeState {
   final List<Product> allProducts;
   final List<Product> filteredProducts;
+  final List<Product> popularProducts;
+  final List<Product> recommendedProducts;
   final String selectedCategory;
   final String searchQuery;
 
   const HomeLoaded({
     required this.allProducts,
     required this.filteredProducts,
+    required this.popularProducts,
+    required this.recommendedProducts,
     this.selectedCategory = 'All',
     this.searchQuery = '',
   });
 
   @override
-  List<Object?> get props => [allProducts, filteredProducts, selectedCategory, searchQuery];
+  List<Object?> get props => [
+        allProducts,
+        filteredProducts,
+        popularProducts,
+        recommendedProducts,
+        selectedCategory,
+        searchQuery
+      ];
 }
 
 class HomeError extends HomeState {
