@@ -7,6 +7,7 @@ import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/product_card.dart';
+import 'search_screen.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_state.dart';
 import '../../cart/screens/cart_screen.dart';
@@ -18,7 +19,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<HomeBloc>()..add(LoadHomeData()),
-      child: Scaffold(
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
         backgroundColor: AppColors.background,
         extendBody: true, // Crucial for the bottom dock look
         drawer: Drawer(
@@ -74,6 +77,8 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         bottomNavigationBar: _buildBottomDock(context),
+          );
+        },
       ),
     );
   }
@@ -177,7 +182,22 @@ class HomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   const Icon(Icons.home_filled, color: AppColors.primary, size: 28),
-                  const Icon(Icons.search, color: AppColors.textSecondary, size: 28),
+                  IconButton(
+                    icon: const Icon(Icons.search, color: AppColors.textSecondary, size: 28),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<HomeBloc>(), // Shared Context propagation!
+                            child: const SearchScreen(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   BlocBuilder<CartBloc, CartState>(
                     builder: (context, state) {
                       return Stack(
