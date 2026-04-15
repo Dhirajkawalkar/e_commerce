@@ -17,3 +17,12 @@ class ChangeCategory extends HomeEvent {
   @override
   List<Object?> get props => [category];
 }
+
+class SearchProducts extends HomeEvent {
+  final String query;
+
+  const SearchProducts(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
