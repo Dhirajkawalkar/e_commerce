@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/utils/injection_container.dart';
 import '../../../core/constants/app_colors.dart';
 import '../bloc/home_bloc.dart';
@@ -9,10 +10,13 @@ import '../bloc/home_state.dart';
 import '../widgets/product_card.dart';
 import '../widgets/horizontal_product_card.dart';
 import '../widgets/section_header.dart';
+import '../widgets/empty_state_view.dart';
 import 'search_screen.dart';
+import 'section_products_screen.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_state.dart';
 import '../../cart/screens/cart_screen.dart';
+import '../../product/domain/entities/product.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,68 +28,68 @@ class HomeScreen extends StatelessWidget {
       child: Builder(
         builder: (context) {
           return Scaffold(
-        backgroundColor: AppColors.background,
-        extendBody: true, // Crucial for the bottom dock look
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(color: AppColors.primary),
-                child: Text('E-commerce Shop', style: TextStyle(color: Colors.white, fontSize: 24)),
-              ),
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('Home'),
-                onTap: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        ),
-        body: BlocBuilder<HomeBloc, HomeState>(
-          builder: (context, state) {
-            return NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                return [
-                  SliverAppBar(
-                    pinned: true,
-                    floating: true,
-                    elevation: 0,
-                    centerTitle: true,
-                    backgroundColor: AppColors.background,
-                    // Subtle shadow/line when content scrolls under
-                    forceElevated: innerBoxIsScrolled,
-                    leading: IconButton(
-                      icon: const Icon(Icons.notes_rounded, color: AppColors.textPrimary),
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                    ),
-                    title: Image.asset('assets/images/flipkart_logo.png', height: 30),
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
-                        onPressed: () {},
-                      ),
-                    ],
-                    // MODERN CHIPS SECTION
-                    bottom: PreferredSize(
-                      preferredSize: const Size.fromHeight(60),
-                      child: _buildModernChips(context, state),
-                    ),
+            backgroundColor: AppColors.background,
+            extendBody: true, 
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  const DrawerHeader(
+                    decoration: BoxDecoration(color: AppColors.primary),
+                    child: Text('E-commerce Shop', style: TextStyle(color: Colors.white, fontSize: 24)),
                   ),
-                ];
+                  ListTile(
+                    leading: const Icon(Icons.home),
+                    title: const Text('Home'),
+                    onTap: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            body: BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                return NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [
+                      SliverAppBar(
+                        pinned: true,
+                        floating: true,
+                        elevation: 0,
+                        centerTitle: true,
+                        backgroundColor: AppColors.background,
+                        forceElevated: innerBoxIsScrolled,
+                        leading: IconButton(
+                          icon: const Icon(Icons.notes_rounded, color: AppColors.textPrimary),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
+                        title: const Text('E-Commerce Shop', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
+                        actions: [
+                          IconButton(
+                            icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
+                            onPressed: () {},
+                          ),
+                        ],
+                        bottom: PreferredSize(
+                          preferredSize: const Size.fromHeight(60),
+                          child: _buildModernChips(context, state),
+                        ),
+                      ),
+                    ];
+                  },
+                  body: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: _buildProductContent(context, state),
+                  ),
+                );
               },
-              body: _buildProductContent(context, state),
-            );
-          },
-        ),
-        bottomNavigationBar: _buildBottomDock(context),
+            ),
+            bottomNavigationBar: _buildBottomDock(context),
           );
         },
       ),
     );
   }
 
-  // Refined modern Chips with animation
   Widget _buildModernChips(BuildContext context, HomeState state) {
     final categories = ['All', 'Electronics', 'Fashion', 'Home'];
 
@@ -100,34 +104,40 @@ class HomeScreen extends StatelessWidget {
           final category = categories[index];
           final bool isSelected = (state is HomeLoaded) ? state.selectedCategory == category : index == 0;
 
-          return GestureDetector(
-            onTap: () {
-              if (state is HomeLoaded) {
-                context.read<HomeBloc>().add(ChangeCategory(category));
-              }
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : AppColors.surface,
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  if (state is HomeLoaded) {
+                    context.read<HomeBloc>().add(ChangeCategory(category));
+                  }
+                },
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.black12,
-                  width: 1,
-                ),
-                boxShadow: isSelected
-                    ? [BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 4))]
-                    : [],
-              ),
-              child: Text(
-                category,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  fontSize: 14,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.primary : AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primary : Colors.black12,
+                      width: 1,
+                    ),
+                    boxShadow: isSelected
+                        ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))]
+                        : [],
+                  ),
+                  child: Text(
+                    category,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : AppColors.textPrimary,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -139,69 +149,131 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildProductContent(BuildContext context, HomeState state) {
     if (state is HomeLoading || state is HomeInitial) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.primary));
-    } else if (state is HomeError) {
-      return Center(child: Text(state.message, style: const TextStyle(color: AppColors.error)));
-    } else if (state is HomeLoaded) {
-      return RefreshIndicator(
-        onRefresh: () async => context.read<HomeBloc>().add(LoadHomeData()),
-        child: state.searchQuery.isNotEmpty 
-            // ACTIVE SEARCH UI: Show flat grid strictly resolving exact string queries decoupling section boundaries. 
-            ? GridView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), 
+      final dummyProducts = List.generate(4, (index) => Product(
+        id: 'dummy_$index',
+        name: 'Loading Product Name Skeleton',
+        price: 99.99,
+        imageUrl: 'https://dummyimage.com/400x400/fff/aaa',
+        category: 'All',
+        rating: 4.5,
+      ));
+
+      return Skeletonizer(
+        enabled: true,
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionHeader(title: 'For You'),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.72,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                 ),
-                itemCount: state.filteredProducts.length,
-                itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
-              )
-            // DEFAULT UI: Premium Multiple Section Navigation Arrays
+                itemCount: 4,
+                itemBuilder: (context, index) => ProductCard(product: dummyProducts[index]),
+              ),
+              const SizedBox(height: 24),
+              const SectionHeader(title: 'Popular'),
+              SizedBox(
+                height: 230,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  itemCount: 3,
+                  itemBuilder: (context, index) => HorizontalProductCard(product: dummyProducts[index]),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else if (state is HomeError) {
+      return Center(child: Text(state.message, style: const TextStyle(color: AppColors.error)));
+    } else if (state is HomeLoaded) {
+      return RefreshIndicator(
+        onRefresh: () async => context.read<HomeBloc>().add(LoadHomeData()),
+        child: state.searchQuery.isNotEmpty 
+            ? (state.filteredProducts.isEmpty
+                ? const EmptyStateView()
+                : GridView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), 
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.72,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: state.filteredProducts.length,
+                    itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
+                  ))
             : SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 100), // Bound offset handling bottom docks gracefully
+                padding: const EdgeInsets.only(bottom: 100), 
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SectionHeader(title: 'For You', onSeeAll: null), // "See All" disabled for testing 
-                    GridView.builder(
-                      shrinkWrap: true, // Forces layout into custom scrollView 
-                      physics: const NeverScrollableScrollPhysics(), // Disables competing internal scroll gestures natively
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.72,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      itemCount: state.filteredProducts.length,
-                      itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
-                    ),
-                    const SizedBox(height: 24),
-                    const SectionHeader(title: 'Popular', onSeeAll: null),
-                    SizedBox(
-                      height: 230, // Optimized horizontal limit avoiding overflow wraps automatically
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
+                    const SectionHeader(title: 'For You'),
+                    if (state.filteredProducts.isEmpty)
+                      const Padding(padding: EdgeInsets.only(top: 40), child: EmptyStateView())
+                    else
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        itemCount: state.popularProducts.length,
-                        itemBuilder: (context, index) => HorizontalProductCard(product: state.popularProducts[index]),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.72,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: state.filteredProducts.length,
+                        itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    const SectionHeader(title: 'Recommended', onSeeAll: null),
-                    SizedBox(
-                      height: 230,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        itemCount: state.recommendedProducts.length,
-                        itemBuilder: (context, index) => HorizontalProductCard(product: state.recommendedProducts[index]),
+                    if (state.popularProducts.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      SectionHeader(
+                        title: 'Popular', 
+                        onSeeAll: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => SectionProductsScreen(title: 'Popular Products', products: state.popularProducts)));
+                        }
                       ),
-                    ),
+                      SizedBox(
+                        height: 230,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          itemCount: state.popularProducts.length,
+                          itemBuilder: (context, index) => HorizontalProductCard(product: state.popularProducts[index]),
+                        ),
+                      ),
+                    ],
+                    if (state.recommendedProducts.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      SectionHeader(
+                        title: 'Recommended', 
+                        onSeeAll: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => SectionProductsScreen(title: 'Recommended Products', products: state.recommendedProducts)));
+                        }
+                      ),
+                      SizedBox(
+                        height: 230,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          itemCount: state.recommendedProducts.length,
+                          itemBuilder: (context, index) => HorizontalProductCard(product: state.recommendedProducts[index]),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -210,7 +282,6 @@ class HomeScreen extends StatelessWidget {
     return const SizedBox.shrink();
   }
 
-  // Your Glassmorphism Nav Dock (Kept as is but integrated into build)
   Widget _buildBottomDock(BuildContext context) {
     return SafeArea(
       child: Container(
@@ -223,7 +294,7 @@ class HomeScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.surface.withOpacity(0.8),
+                color: AppColors.surface.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(32),
                 border: Border.all(color: Colors.white24),
               ),
@@ -240,7 +311,7 @@ class HomeScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => BlocProvider.value(
-                            value: context.read<HomeBloc>(), // Shared Context propagation!
+                            value: context.read<HomeBloc>(), 
                             child: const SearchScreen(),
                           ),
                         ),
