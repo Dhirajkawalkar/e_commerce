@@ -7,6 +7,8 @@ import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/product_card.dart';
+import '../widgets/horizontal_product_card.dart';
+import '../widgets/section_header.dart';
 import 'search_screen.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_state.dart';
@@ -143,19 +145,66 @@ class HomeScreen extends StatelessWidget {
     } else if (state is HomeLoaded) {
       return RefreshIndicator(
         onRefresh: () async => context.read<HomeBloc>().add(LoadHomeData()),
-        child: state.filteredProducts.isEmpty
-            ? const Center(child: Text('No products found.'))
-            : GridView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), // Extra bottom padding for the Dock
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.72,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-          ),
-          itemCount: state.filteredProducts.length,
-          itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
-        ),
+        child: state.searchQuery.isNotEmpty 
+            // ACTIVE SEARCH UI: Show flat grid strictly resolving exact string queries decoupling section boundaries. 
+            ? GridView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), 
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.72,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemCount: state.filteredProducts.length,
+                itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
+              )
+            // DEFAULT UI: Premium Multiple Section Navigation Arrays
+            : SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(bottom: 100), // Bound offset handling bottom docks gracefully
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionHeader(title: 'For You', onSeeAll: null), // "See All" disabled for testing 
+                    GridView.builder(
+                      shrinkWrap: true, // Forces layout into custom scrollView 
+                      physics: const NeverScrollableScrollPhysics(), // Disables competing internal scroll gestures natively
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.72,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: state.filteredProducts.length,
+                      itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
+                    ),
+                    const SizedBox(height: 24),
+                    const SectionHeader(title: 'Popular', onSeeAll: null),
+                    SizedBox(
+                      height: 230, // Optimized horizontal limit avoiding overflow wraps automatically
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        itemCount: state.popularProducts.length,
+                        itemBuilder: (context, index) => HorizontalProductCard(product: state.popularProducts[index]),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const SectionHeader(title: 'Recommended', onSeeAll: null),
+                    SizedBox(
+                      height: 230,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        itemCount: state.recommendedProducts.length,
+                        itemBuilder: (context, index) => HorizontalProductCard(product: state.recommendedProducts[index]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       );
     }
     return const SizedBox.shrink();

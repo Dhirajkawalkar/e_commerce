@@ -13,7 +13,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SearchProducts>(_onSearchProducts);
   }
 
-  // Dual-Axis Filter Core Engine decoupled purely functionally out of UI execution paths natively
   List<Product> _applyFilters(List<Product> source, String category, String query) {
     return source.where((product) {
       final matchesCategory = category == 'All' || product.category == category;
@@ -30,9 +29,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(HomeLoading());
     try {
       final products = await productRepository.getProducts();
+
+      final popularProducts = products.where((p) => p.rating >= 4.5).toList();
+      final recommendedProducts = products.take(6).toList();
+
       emit(HomeLoaded(
         allProducts: products,
-        filteredProducts: products, // Initial payload maps cleanly
+        filteredProducts: products, 
+        popularProducts: popularProducts, 
+        recommendedProducts: recommendedProducts,
         selectedCategory: 'All',
         searchQuery: '',
       ));
@@ -58,8 +63,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(HomeLoaded(
         allProducts: currentState.allProducts,
         filteredProducts: newFilterMap,
+        popularProducts: currentState.popularProducts,
+        recommendedProducts: currentState.recommendedProducts,
         selectedCategory: targetCategory,
-        searchQuery: currentState.searchQuery, // Maintains Query during category swapping
+        searchQuery: currentState.searchQuery, 
       ));
     }
   }
@@ -81,7 +88,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(HomeLoaded(
         allProducts: currentState.allProducts,
         filteredProducts: newFilterMap,
-        selectedCategory: currentState.selectedCategory, // Maintains category during typing constraints 
+        popularProducts: currentState.popularProducts,
+        recommendedProducts: currentState.recommendedProducts,
+        selectedCategory: currentState.selectedCategory, 
         searchQuery: targetQuery,
       ));
     }
