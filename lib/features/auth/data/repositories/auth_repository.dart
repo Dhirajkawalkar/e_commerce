@@ -28,4 +28,9 @@ class AuthRepository {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(keyIsLoggedIn) ?? false;
   }
+
+  Future<String?> getUserEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(keyUserEmail);
+  }
 }

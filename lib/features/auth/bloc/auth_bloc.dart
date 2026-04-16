@@ -17,7 +17,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final isLoggedIn = await repository.checkLoggedIn();
       if (isLoggedIn) {
-        emit(Authenticated());
+        final email = await repository.getUserEmail() ?? 'User';
+        emit(Authenticated(email));
       } else {
         emit(Unauthenticated());
       }
@@ -36,7 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw Exception('Password must be at least 6 characters');
       }
       await repository.login(event.email, event.password);
-      emit(Authenticated());
+      emit(Authenticated(event.email));
     } catch (e) {
       emit(AuthError(e.toString().replaceAll('Exception: ', '')));
       emit(Unauthenticated());
@@ -53,7 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw Exception('Password must be at least 6 characters');
       }
       await repository.signup(event.email, event.password);
-      emit(Authenticated());
+      emit(Authenticated(event.email));
     } catch (e) {
       emit(AuthError(e.toString().replaceAll('Exception: ', '')));
       emit(Unauthenticated());

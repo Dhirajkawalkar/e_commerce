@@ -17,6 +17,7 @@ import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_state.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../product/domain/entities/product.dart';
+import '../../auth/screens/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -341,7 +342,12 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                   ),
-                  const Icon(Icons.person_outline, color: AppColors.textSecondary, size: 28),
+                  IconButton(
+                    icon: const Icon(Icons.person_outline, color: AppColors.textSecondary, size: 28),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())),
+                  ),
                 ],
               ),
             ),

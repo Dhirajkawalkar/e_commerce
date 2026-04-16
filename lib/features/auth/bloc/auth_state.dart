@@ -10,7 +10,12 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class Authenticated extends AuthState {}
+class Authenticated extends AuthState {
+  final String email;
+  const Authenticated(this.email);
+  @override
+  List<Object?> get props => [email];
+}
 
 class Unauthenticated extends AuthState {}
 
