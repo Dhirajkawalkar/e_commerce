@@ -1,17 +1,36 @@
-# e_commerce
+# 🛒 Flutter E-Commerce App
 
-A new Flutter project.
+A production-level e-commerce mobile application built using Flutter, following clean architecture and BLoC state management.
 
-## Getting Started
+## 🚀 Features
 
-This project is a starting point for a Flutter application.
+- 🏠 Home screen with category filtering and section-based UI
+- 🔍 Real-time product search
+- 📦 Product details view
+- 🛒 Cart management with quantity control and undo feature
+- 💳 Checkout flow with order summary
+- ⚡ Skeleton loading for better UX
+- 🎯 Clean architecture (UI → BLoC → Repository → Service)
 
-A few resources to get you started if this is your first Flutter project:
+## 🧠 Architecture
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Feature-first structure
+- BLoC for state management
+- Dependency Injection using GetIt
+- Repository pattern for data handling
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📱 Screens
+
+(Add your screenshots here)
+
+## 🔧 Tech Stack
+
+- Flutter
+- Dart
+- flutter_bloc
+- get_it
+- skeletonizer
+
+## 📌 Note
+
+Currently uses mock data. Designed to easily integrate real APIs without modifying UI or business logic.
