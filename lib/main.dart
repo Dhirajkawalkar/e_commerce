@@ -4,6 +4,10 @@ import 'core/constants/app_colors.dart';
 import 'core/utils/injection_container.dart' as di;
 import 'features/home/screens/home_screen.dart';
 import 'features/cart/bloc/cart_bloc.dart';
+import 'features/auth/bloc/auth_bloc.dart';
+import 'features/auth/bloc/auth_event.dart';
+import 'features/auth/bloc/auth_state.dart';
+import 'features/auth/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +23,7 @@ class ECommerceApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => di.sl<CartBloc>()),
+        BlocProvider(create: (_) => di.sl<AuthBloc>()..add(CheckAuthStatus())),
       ],
       child: MaterialApp(
         title: 'E-Commerce App',
@@ -32,7 +37,20 @@ class ECommerceApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const HomeScreen(),
+        home: BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            if (state is Authenticated) {
+              return const HomeScreen();
+            } else if (state is Unauthenticated) {
+              return const LoginScreen();
+            }
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+            );
+          },
+        ),
         debugShowCheckedModeBanner: false,
       ),
     );
