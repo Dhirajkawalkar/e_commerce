@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:e_commerce/core/utils/snackbar_type.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/snackbar_type.dart';
 import '../../../core/utils/snackbar_util.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';

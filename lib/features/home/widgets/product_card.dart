@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:e_commerce/core/utils/snackbar_type.dart';
+import '../../../core/utils/snackbar_type.dart';
 import '../../product/domain/entities/product.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
