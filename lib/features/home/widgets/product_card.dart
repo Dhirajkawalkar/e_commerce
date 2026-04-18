@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:e_commerce/core/utils/snackbar_type.dart';
 import '../../product/domain/entities/product.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
+import '../../../core/utils/snackbar_util.dart';
 import '../../product/screens/product_details_screen.dart';
 import '../../../core/constants/app_colors.dart';
 
@@ -120,14 +122,7 @@ class ProductCard extends StatelessWidget {
                               child: InkWell(
                                 onTap: () {
                                   context.read<CartBloc>().add(AddToCart(product: product));
-                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${product.name} added to cart'),
-                                      duration: const Duration(seconds: 1),
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
-                                  );
+                                  showCustomSnackBar(context, '${product.name} added to cart', type: SnackBarType.success);
                                 },
                                 borderRadius: BorderRadius.circular(24),
                                 child: Container(

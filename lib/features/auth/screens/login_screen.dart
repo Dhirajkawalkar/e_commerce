@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:e_commerce/core/utils/snackbar_type.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/snackbar_util.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -40,11 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is Authenticated) {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(state.message), 
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ));
+            showCustomSnackBar(context, state.message, type: SnackBarType.error);
           }
         },
         builder: (context, state) {

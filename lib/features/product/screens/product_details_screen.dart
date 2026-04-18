@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:e_commerce/core/utils/snackbar_type.dart';
 import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
 import '../domain/entities/product.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/snackbar_util.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -116,14 +118,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () {
                     context.read<CartBloc>().add(AddToCart(product: product));
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${product.name} added to cart'),
-                        duration: const Duration(seconds: 1),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    showCustomSnackBar(context, '${product.name} added to cart', type: SnackBarType.success);
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -139,14 +134,7 @@ class ProductDetailsScreen extends StatelessWidget {
                   onPressed: () {
                     // Instantly append to cart mimicking fluid checkout pipelines
                     context.read<CartBloc>().add(AddToCart(product: product));
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${product.name} prepared for checkout'),
-                        duration: const Duration(seconds: 1),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    showCustomSnackBar(context, '${product.name} prepared for checkout', type: SnackBarType.success);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
