@@ -6,6 +6,8 @@ import '../../../core/utils/snackbar_util.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
+import '../widgets/login_button.dart';
+import '../widgets/login_header.dart';
 import 'signup_screen.dart';
 import '../../home/screens/home_screen.dart';
 
@@ -53,12 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 60),
-                  const Icon(Icons.lock_person_rounded, size: 80, color: AppColors.primary),
-                  const SizedBox(height: 24),
-                  const Text('Welcome Back', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textPrimary), textAlign: TextAlign.center),
-                  const SizedBox(height: 8),
-                  const Text('Login to continue shopping', style: TextStyle(fontSize: 16, color: AppColors.textSecondary), textAlign: TextAlign.center),
+                  const LoginHeader(),
                   const SizedBox(height: 48),
                   TextField(
                     controller: _emailController,
@@ -82,17 +79,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                   ),
                   const SizedBox(height: 32),
-                  ElevatedButton(
+                  LoginButton(
                     onPressed: state is AuthLoading ? null : _login,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    child: state is AuthLoading 
-                        ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                        : const Text('Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    isLoading: state is AuthLoading,
                   ),
                   const SizedBox(height: 24),
                   Row(
