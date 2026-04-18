@@ -1,6 +1,5 @@
+import 'package:Cartify/core/utils/snackbar_type.dart';
 import 'package:flutter/material.dart';
-import 'package:e_commerce/core/constants/app_colors.dart';
-import 'package:e_commerce/core/utils/snackbar_type.dart';
 
 void showCustomSnackBar(BuildContext context, String message, {SnackBarType type = SnackBarType.info}) {
   IconData icon;
