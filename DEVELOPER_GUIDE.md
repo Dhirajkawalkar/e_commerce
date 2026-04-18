@@ -1,9 +1,9 @@
-# Developer Guide - E-commerce Flutter App
+# Developer Guide - Cartify Flutter App
 
-Welcome to the E-commerce Flutter App repository! This document serves as the central source of truth for the project's current state, architecture, strict rules, and available features.
+Welcome to the Cartify repository! This document serves as the central source of truth for the project's current state, architecture, strict rules, and available features.
 
 ## 🚀 Project Overview
-This project is a modern, high-performance Flutter E-commerce application. It is built utilizing **Feature-Based Architecture combined with Shared Business Logic domains** and robust State Management via **BLoC**.
+This project is a modern, high-performance Flutter Cartify application. It is built utilizing **Feature-Based Architecture combined with Shared Business Logic domains** and robust State Management via **BLoC**.
 
 ---
 

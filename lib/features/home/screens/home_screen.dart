@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   const DrawerHeader(
                     decoration: BoxDecoration(color: AppColors.primary),
-                    child: Text('E-commerce Shop', style: TextStyle(color: Colors.white, fontSize: 24)),
+                    child: Text('Cartify', style: TextStyle(color: Colors.white, fontSize: 24)),
                   ),
                   ListTile(
                     leading: const Icon(Icons.home),
@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                           icon: const Icon(Icons.notes_rounded, color: AppColors.textPrimary),
                           onPressed: () => Scaffold.of(context).openDrawer(),
                         ),
-                        title: const Text('E-Commerce Shop', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
+                        title: const Text('Cartify', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
                         actions: [
                           IconButton(
                             icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
