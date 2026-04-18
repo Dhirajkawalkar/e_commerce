@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:e_commerce/core/utils/snackbar_type.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/snackbar_util.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -20,11 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   void _signup() {
     if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Passwords do not match'),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-      ));
+      showCustomSnackBar(context, 'Passwords do not match', type: SnackBarType.error);
       return;
     }
     context.read<AuthBloc>().add(
@@ -54,11 +52,7 @@ class _SignupScreenState extends State<SignupScreen> {
           if (state is Authenticated) {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ));
+            showCustomSnackBar(context, state.message, type: SnackBarType.error);
           }
         },
         builder: (context, state) {
