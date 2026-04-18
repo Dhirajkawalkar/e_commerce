@@ -1,23 +1,12 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/utils/injection_container.dart';
 import '../../../core/constants/app_colors.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
-import '../bloc/home_state.dart';
-import '../widgets/product_card.dart';
-import '../widgets/horizontal_product_card.dart';
-import '../widgets/section_header.dart';
-import '../widgets/empty_state_view.dart';
-import 'search_screen.dart';
-import 'section_products_screen.dart';
-import '../../cart/bloc/cart_bloc.dart';
-import '../../cart/bloc/cart_state.dart';
-import '../../cart/screens/cart_screen.dart';
-import '../../product/domain/entities/product.dart';
-import '../../auth/screens/profile_screen.dart';
+import '../widgets/home_bottom_nav_bar.dart';
+import '../widgets/home_category_chips.dart';
+import '../widgets/home_product_content.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,7 +19,7 @@ class HomeScreen extends StatelessWidget {
         builder: (context) {
           return Scaffold(
             backgroundColor: AppColors.background,
-            extendBody: true, 
+            extendBody: true,
             drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -47,312 +36,42 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            body: BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                return NestedScrollView(
-                  headerSliverBuilder: (context, innerBoxIsScrolled) {
-                    return [
-                      SliverAppBar(
-                        pinned: true,
-                        floating: true,
-                        elevation: 0,
-                        centerTitle: true,
-                        backgroundColor: AppColors.background,
-                        forceElevated: innerBoxIsScrolled,
-                        leading: IconButton(
-                          icon: const Icon(Icons.notes_rounded, color: AppColors.textPrimary),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        ),
-                        title: const Text('Cartify', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
-                        actions: [
-                          IconButton(
-                            icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
-                            onPressed: () {},
-                          ),
-                        ],
-                        bottom: PreferredSize(
-                          preferredSize: const Size.fromHeight(60),
-                          child: _buildModernChips(context, state),
-                        ),
+            body: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  SliverAppBar(
+                    pinned: true,
+                    floating: true,
+                    elevation: 0,
+                    centerTitle: true,
+                    backgroundColor: AppColors.background,
+                    forceElevated: innerBoxIsScrolled,
+                    leading: IconButton(
+                      icon: const Icon(Icons.notes_rounded, color: AppColors.textPrimary),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                    ),
+                    title: const Text('Cartify', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 18)),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary),
+                        onPressed: () {},
                       ),
-                    ];
-                  },
-                  body: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    child: _buildProductContent(context, state),
+                    ],
+                    bottom: const PreferredSize(
+                      preferredSize: Size.fromHeight(60),
+                      child: HomeCategoryChips(),
+                    ),
                   ),
-                );
+                ];
               },
+              body: const AnimatedSwitcher(
+                duration: Duration(milliseconds: 300),
+                child: HomeProductContent(),
+              ),
             ),
-            bottomNavigationBar: _buildBottomDock(context),
+            bottomNavigationBar: const HomeBottomNavBar(),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildModernChips(BuildContext context, HomeState state) {
-    final categories = ['All', 'Electronics', 'Fashion', 'Home'];
-
-    return Container(
-      height: 60,
-      color: AppColors.background,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          final category = categories[index];
-          final bool isSelected = (state is HomeLoaded) ? state.selectedCategory == category : index == 0;
-
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  if (state is HomeLoaded) {
-                    context.read<HomeBloc>().add(ChangeCategory(category));
-                  }
-                },
-                borderRadius: BorderRadius.circular(16),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isSelected ? AppColors.primary : AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : Colors.black12,
-                      width: 1,
-                    ),
-                    boxShadow: isSelected
-                        ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 4))]
-                        : [],
-                  ),
-                  child: Text(
-                    category,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildProductContent(BuildContext context, HomeState state) {
-    if (state is HomeLoading || state is HomeInitial) {
-      final dummyProducts = List.generate(4, (index) => Product(
-        id: 'dummy_$index',
-        name: 'Loading Product Name Skeleton',
-        price: 99.99,
-        imageUrl: 'https://dummyimage.com/400x400/fff/aaa',
-        category: 'All',
-        rating: 4.5,
-      ));
-
-      return Skeletonizer(
-        enabled: true,
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SectionHeader(title: 'For You'),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.72,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: 4,
-                itemBuilder: (context, index) => ProductCard(product: dummyProducts[index]),
-              ),
-              const SizedBox(height: 24),
-              const SectionHeader(title: 'Popular'),
-              SizedBox(
-                height: 230,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  itemCount: 3,
-                  itemBuilder: (context, index) => HorizontalProductCard(product: dummyProducts[index]),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else if (state is HomeError) {
-      return Center(child: Text(state.message, style: const TextStyle(color: AppColors.error)));
-    } else if (state is HomeLoaded) {
-      return RefreshIndicator(
-        onRefresh: () async => context.read<HomeBloc>().add(LoadHomeData()),
-        child: state.searchQuery.isNotEmpty 
-            ? (state.filteredProducts.isEmpty
-                ? const EmptyStateView()
-                : GridView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), 
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.72,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                    ),
-                    itemCount: state.filteredProducts.length,
-                    itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
-                  ))
-            : SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 100), 
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SectionHeader(title: 'For You'),
-                    if (state.filteredProducts.isEmpty)
-                      const Padding(padding: EdgeInsets.only(top: 40), child: EmptyStateView())
-                    else
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.72,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                        ),
-                        itemCount: state.filteredProducts.length,
-                        itemBuilder: (context, index) => ProductCard(product: state.filteredProducts[index]),
-                      ),
-                    if (state.popularProducts.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      SectionHeader(
-                        title: 'Popular', 
-                        onSeeAll: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => SectionProductsScreen(title: 'Popular Products', products: state.popularProducts)));
-                        }
-                      ),
-                      SizedBox(
-                        height: 230,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          itemCount: state.popularProducts.length,
-                          itemBuilder: (context, index) => HorizontalProductCard(product: state.popularProducts[index]),
-                        ),
-                      ),
-                    ],
-                    if (state.recommendedProducts.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      SectionHeader(
-                        title: 'Recommended', 
-                        onSeeAll: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => SectionProductsScreen(title: 'Recommended Products', products: state.recommendedProducts)));
-                        }
-                      ),
-                      SizedBox(
-                        height: 230,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          itemCount: state.recommendedProducts.length,
-                          itemBuilder: (context, index) => HorizontalProductCard(product: state.recommendedProducts[index]),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-      );
-    }
-    return const SizedBox.shrink();
-  }
-
-  Widget _buildBottomDock(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        height: 70,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: AppColors.surface.withValues(alpha: 0.8),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: Colors.white24),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Icon(Icons.home_filled, color: AppColors.primary, size: 28),
-                  IconButton(
-                    icon: const Icon(Icons.search, color: AppColors.textSecondary, size: 28),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<HomeBloc>(), 
-                            child: const SearchScreen(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  BlocBuilder<CartBloc, CartState>(
-                    builder: (context, state) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        clipBehavior: Clip.none,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.shopping_cart_outlined, color: AppColors.textSecondary, size: 28),
-                            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())),
-                          ),
-                          if (state.totalItems > 0)
-                            Positioned(
-                              right: 0, top: 4,
-                              child: CircleAvatar(
-                                radius: 8,
-                                backgroundColor: AppColors.primary,
-                                child: Text('${state.totalItems}', style: const TextStyle(color: Colors.white, fontSize: 10)),
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.person_outline, color: AppColors.textSecondary, size: 28),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen())),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
