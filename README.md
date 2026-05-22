@@ -16,7 +16,7 @@ A production-level e-commerce mobile application built using Flutter, following 
 
 - Feature-first structure
 - BLoC for state management
-- Dependency Injection using GetIt
+- Dependency Injection using GetIt 
 - Repository pattern for data handling
 
 ## 📱 Screens
