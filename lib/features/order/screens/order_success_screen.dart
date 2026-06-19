@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../home/screens/home_screen.dart';
 
+/// [OrderSuccessScreen] is displayed after the user successfully places an order.
+/// It provides positive feedback and a way to return to the home screen.
 class OrderSuccessScreen extends StatelessWidget {
   const OrderSuccessScreen({super.key});
 
@@ -42,10 +44,11 @@ class OrderSuccessScreen extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
+                    // Navigate back to the Home screen and clear the navigation history.
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (_) => const HomeScreen()),
-                      (route) => false, // This thoroughly clears the entire navigation stack out completely!
+                      (route) => false,
                     );
                   },
                   style: ElevatedButton.styleFrom(

@@ -8,6 +8,9 @@ import '../../../core/utils/snackbar_util.dart';
 import '../../product/screens/product_details_screen.dart';
 import '../../../core/constants/app_colors.dart';
 
+/// [Product_Card] is a visual representation of a single product in a grid or list.
+/// It displays the product image, name, price, and rating.
+/// It also provides a quick "Add to Cart" button and navigates to the details screen on tap.
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -15,6 +18,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Entrance animation for the card when it first appears.
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0.0, end: 1.0),
       duration: const Duration(milliseconds: 300),
@@ -46,6 +50,7 @@ class ProductCard extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
+                // Navigates to the detailed view of the product.
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => ProductDetailsScreen(product: product)),
@@ -53,7 +58,7 @@ class ProductCard extends StatelessWidget {
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, // Prevents RenderFlex Overflows entirely!
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Expanded(
                     child: SizedBox(
@@ -80,7 +85,7 @@ class ProductCard extends StatelessWidget {
                       children: [
                         Text(
                           product.name,
-                          maxLines: 1, // Scaled down constraint bypassing multi-line grid collision!
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 14,
@@ -117,6 +122,7 @@ class ProductCard extends StatelessWidget {
                                 ),
                               ],
                             ),
+                            // Quick Add-to-Cart button with feedback.
                             Material(
                               color: Colors.transparent,
                               child: InkWell(

@@ -8,18 +8,22 @@ import '../widgets/home_bottom_nav_bar.dart';
 import '../widgets/home_category_chips.dart';
 import '../widgets/home_product_content.dart';
 
+/// [HomeScreen] is the main landing page of the application after login.
+/// It displays product categories, featured products (Popular, Recommended),
+/// and provides navigation to other main sections like Cart and Profile.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Provides HomeBloc to the widget tree and triggers the initial data load.
     return BlocProvider(
       create: (context) => sl<HomeBloc>()..add(LoadHomeData()),
       child: Builder(
         builder: (context) {
           return Scaffold(
             backgroundColor: AppColors.background,
-            extendBody: true,
+            extendBody: true, // Allows content to flow behind the bottom nav bar
             drawer: Drawer(
               child: ListView(
                 padding: EdgeInsets.zero,
@@ -57,6 +61,7 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () {},
                       ),
                     ],
+                    // Category selection bar pinned at the bottom of the AppBar.
                     bottom: const PreferredSize(
                       preferredSize: Size.fromHeight(60),
                       child: HomeCategoryChips(),
@@ -64,6 +69,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ];
               },
+              // The main content area which switches between loading, error, and product lists.
               body: const AnimatedSwitcher(
                 duration: Duration(milliseconds: 300),
                 child: HomeProductContent(),

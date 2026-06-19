@@ -10,6 +10,9 @@ import '../bloc/home_bloc.dart';
 import '../screens/search_screen.dart';
 
 
+/// [HomeBottomNavBar] is a custom floating bottom navigation bar.
+/// It provides navigation to Home, Search, Cart, and Profile screens.
+/// It includes a live badge for the number of items in the cart.
 class HomeBottomNavBar extends StatelessWidget {
   const HomeBottomNavBar({super.key});
 
@@ -50,6 +53,7 @@ class HomeBottomNavBar extends StatelessWidget {
                       );
                     },
                   ),
+                  // Cart icon with a badge showing the number of items.
                   BlocBuilder<CartBloc, CartState>(
                     builder: (context, state) {
                       return Stack(

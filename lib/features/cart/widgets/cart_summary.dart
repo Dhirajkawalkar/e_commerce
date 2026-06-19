@@ -1,3 +1,8 @@
+/// A widget that displays the total price and a checkout button.
+/// 
+/// This widget is typically shown at the bottom of the Cart screen. It
+/// calculates the total price from the [CartBloc] state and handles
+/// navigation to the [CheckoutScreen].
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../order/screens/checkout_screen.dart';
@@ -8,7 +13,9 @@ class CartSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Watch the CartBloc to get the current total price.
     final state = context.watch<CartBloc>().state;
+    
     return Container(
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
@@ -24,6 +31,7 @@ class CartSummary extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Display Total Price
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -41,6 +49,7 @@ class CartSummary extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
+          // Checkout Button
           SizedBox(
             width: double.infinity,
             height: 50,

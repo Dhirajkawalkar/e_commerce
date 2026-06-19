@@ -1,8 +1,15 @@
+/// A custom button widget for the Login screen.
+/// 
+/// This widget wraps an [ElevatedButton] and provides a loading indicator
+/// when the login process is in progress.
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 
 class LoginButton extends StatelessWidget {
+  /// Callback function when the button is pressed.
   final VoidCallback? onPressed;
+  
+  /// Whether to show a loading indicator instead of the button text.
   final bool isLoading;
 
   const LoginButton({

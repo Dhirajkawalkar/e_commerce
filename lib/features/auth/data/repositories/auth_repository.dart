@@ -1,3 +1,8 @@
+/// Repository class for Authentication.
+/// 
+/// This class handles all direct interactions with Firebase Auth, providing
+/// a cleaner interface for the rest of the application. It handles login,
+/// signup, logout, and checking current user status.
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepository {
@@ -5,6 +10,9 @@ class AuthRepository {
 
   AuthRepository({required FirebaseAuth firebaseAuth}) : _firebaseAuth = firebaseAuth;
 
+  /// Signs in a user using email and password.
+  /// 
+  /// Throws an [Exception] with a user-friendly message if login fails.
   Future<void> login(String email, String password) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
@@ -18,6 +26,9 @@ class AuthRepository {
     }
   }
 
+  /// Registers a new user using email and password.
+  /// 
+  /// Throws an [Exception] with a user-friendly message if signup fails.
   Future<void> signup(String email, String password) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
@@ -31,18 +42,22 @@ class AuthRepository {
     }
   }
 
+  /// Signs out the current user.
   Future<void> logout() async {
     await _firebaseAuth.signOut();
   }
 
+  /// Checks if there is a currently authenticated user.
   Future<bool> checkLoggedIn() async {
     return _firebaseAuth.currentUser != null;
   }
 
+  /// Returns the email of the currently logged-in user, if any.
   Future<String?> getUserEmail() async {
     return _firebaseAuth.currentUser?.email;
   }
 
+  /// Maps Firebase-specific error codes to user-friendly error messages.
   String _mapFirebaseErrorCode(String code) {
     switch (code) {
       case 'user-not-found':

@@ -6,11 +6,14 @@ import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 
 
+/// [HomeCategoryChips] provides a horizontal scrolling list of category filters.
+/// It allows users to filter the products displayed on the home screen.
 class HomeCategoryChips extends StatelessWidget {
   const HomeCategoryChips({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Hardcoded list of categories. In a production app, these might come from an API.
     final categories = ['All', 'Electronics', 'Fashion', 'Home'];
     final state = context.watch<HomeBloc>().state;
 
@@ -23,6 +26,7 @@ class HomeCategoryChips extends StatelessWidget {
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
+          // Check if the current category is the one selected in the Bloc state.
           final bool isSelected = (state is HomeLoaded) ? state.selectedCategory == category : index == 0;
 
           return Padding(
@@ -32,6 +36,7 @@ class HomeCategoryChips extends StatelessWidget {
               child: InkWell(
                 onTap: () {
                   if (state is HomeLoaded) {
+                    // Update the selected category in HomeBloc.
                     context.read<HomeBloc>().add(ChangeCategory(category));
                   }
                 },

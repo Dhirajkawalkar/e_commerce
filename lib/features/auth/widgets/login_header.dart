@@ -1,3 +1,7 @@
+/// A header widget for the Login screen.
+/// 
+/// This widget displays a welcoming icon and text to greet the user
+/// when they open the login page.
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 

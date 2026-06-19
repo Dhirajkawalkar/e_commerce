@@ -4,6 +4,8 @@ import '../../../core/constants/app_colors.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 
+/// [SearchBarWidget] provides a text input for searching products.
+/// It interacts with [HomeBloc] to trigger search events as the user types.
 class SearchBarWidget extends StatefulWidget {
   const SearchBarWidget({super.key});
 
@@ -18,6 +20,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   void initState() {
     super.initState();
+    // Listen to text changes to show/hide the clear button.
     _controller.addListener(() {
       final isNotEmpty = _controller.text.isNotEmpty;
       if (_showClear != isNotEmpty) {
@@ -40,6 +43,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
+          // Back button that clears the search query before popping.
           IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textPrimary, size: 20),
             onPressed: () {
@@ -78,10 +82,12 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                         border: InputBorder.none,
                       ),
                       onChanged: (value) {
+                        // Dispatch SearchProducts event to HomeBloc on every change.
                         context.read<HomeBloc>().add(SearchProducts(value));
                       },
                     ),
                   ),
+                  // Clear button that appears only when there's text in the field.
                   if (_showClear)
                     IconButton(
                       icon: const Icon(Icons.close, color: AppColors.textSecondary, size: 20),

@@ -1,3 +1,8 @@
+/// A widget representing a single item in the shopping cart.
+/// 
+/// This widget displays product details (image, name, price) and provides 
+/// controls to increase, decrease, or remove the item from the cart. 
+/// It also supports swipe-to-dismiss and an 'Undo' action upon removal.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/cart_item_model.dart';
@@ -5,10 +10,12 @@ import '../bloc/cart_bloc.dart';
 import '../bloc/cart_event.dart';
 
 class CartItemWidget extends StatelessWidget {
+  /// The cart item data to display.
   final CartItemModel cartItem;
 
   const CartItemWidget({super.key, required this.cartItem});
 
+  /// Displays a SnackBar with an 'UNDO' action when an item is removed.
   void _showUndoSnackbar(BuildContext context) {
     final cartBloc = context.read<CartBloc>();
 
@@ -21,7 +28,7 @@ class CartItemWidget extends StatelessWidget {
         action: SnackBarAction(
           label: 'UNDO',
           onPressed: () {
-            // UI purely triggers empty Undo event natively; Bloc handles structural restoration completely decoupled
+            // Triggers the UndoRemove event in the CartBloc.
             cartBloc.add(const UndoRemove());
           },
         ),
@@ -34,7 +41,7 @@ class CartItemWidget extends StatelessWidget {
     final product = cartItem.product;
     
     return Dismissible(
-      // ValueKey properly implements clean UI animation cycles explicitly!
+      // Unique key for the Dismissible widget to track its identity.
       key: ValueKey(product.id),
       direction: DismissDirection.endToStart,
       background: Container(
@@ -48,6 +55,7 @@ class CartItemWidget extends StatelessWidget {
         child: const Icon(Icons.delete_outline, color: Colors.white, size: 30),
       ),
       onDismissed: (direction) {
+        // Remove item from cart when swiped.
         context.read<CartBloc>().add(RemoveFromCart(product: product));
         _showUndoSnackbar(context);
       },
@@ -59,6 +67,7 @@ class CartItemWidget extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
+              // Product Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
@@ -77,6 +86,7 @@ class CartItemWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
+              // Product Details (Name and Price)
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,6 +112,7 @@ class CartItemWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              // Quantity Controls
               Row(
                 children: [
                   IconButton(

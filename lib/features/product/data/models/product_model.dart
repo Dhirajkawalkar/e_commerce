@@ -1,5 +1,7 @@
 import '../../domain/entities/product.dart';
 
+/// [ProductModel] extends [Product] to include JSON serialization logic.
+/// This is used in the Data layer to convert between raw JSON and domain entities.
 class ProductModel extends Product {
   const ProductModel({
     required super.id,
@@ -10,6 +12,7 @@ class ProductModel extends Product {
     required super.rating,
   });
 
+  /// Factory constructor to create a [ProductModel] from a JSON map.
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id'] as String,
@@ -21,6 +24,7 @@ class ProductModel extends Product {
     );
   }
 
+  /// Converts the [ProductModel] back into a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'id': id,

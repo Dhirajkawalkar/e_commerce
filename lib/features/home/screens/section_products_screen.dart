@@ -4,6 +4,8 @@ import '../widgets/product_card.dart';
 import '../widgets/empty_state_view.dart';
 import '../../../core/constants/app_colors.dart';
 
+/// [SectionProductsScreen] displays a full-screen grid of products for a specific section.
+/// This is used when a user clicks "See All" on sections like "Popular" or "Recommended".
 class SectionProductsScreen extends StatelessWidget {
   final String title;
   final List<Product> products;

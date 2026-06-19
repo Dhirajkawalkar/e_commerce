@@ -1,3 +1,8 @@
+/// The Cart screen of the application.
+/// 
+/// This screen displays the list of items the user has added to their cart.
+/// It uses a [BlocBuilder] to listen to [CartBloc] and shows an empty state
+/// view if the cart is empty, or a list of items and a summary if not.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/cart_bloc.dart';
@@ -18,10 +23,12 @@ class CartScreen extends StatelessWidget {
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
+          // Show empty cart view if no items are present.
           if (state.items.isEmpty) {
             return const EmptyCart();
           }
 
+          // Show the list of cart items and the price summary.
           return const Column(
             children: [
               Expanded(

@@ -1,4 +1,8 @@
+/// [ProductService] acts as a mock data source for products.
+/// In a real-world scenario, this would make HTTP calls to a backend API.
 class ProductService {
+  /// Fetches a list of products from a simulated backend.
+  /// Includes a 1-second delay to mimic network latency.
   Future<List<Map<String, dynamic>>> fetchProducts() async {
     await Future.delayed(const Duration(seconds: 1));
     return [

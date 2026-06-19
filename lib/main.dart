@@ -1,3 +1,8 @@
+/// The entry point of the E-Commerce application.
+/// 
+/// This file initializes the application, sets up dependency injection,
+/// configures the global Bloc providers, and defines the base app structure
+/// including theme and initial routing based on authentication state.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/constants/app_colors.dart';
@@ -10,16 +15,22 @@ import 'features/auth/bloc/auth_state.dart';
 import 'features/auth/screens/login_screen.dart';
 
 void main() async {
+  // Ensure that widget binding is initialized before using platform channels.
   WidgetsFlutterBinding.ensureInitialized();
-  await di.init(); // Initialize Dependency Injection
+  
+  // Initialize dependency injection for the entire app.
+  await di.init(); 
+  
   runApp(const ECommerceApp());
 }
 
+/// The root widget of the application.
 class ECommerceApp extends StatelessWidget {
   const ECommerceApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // MultiBlocProvider provides CartBloc and AuthBloc globally.
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => di.sl<CartBloc>()),
@@ -37,6 +48,7 @@ class ECommerceApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
+        // Decides which screen to show based on AuthState.
         home: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is Authenticated) {
@@ -44,6 +56,7 @@ class ECommerceApp extends StatelessWidget {
             } else if (state is Unauthenticated) {
               return const LoginScreen();
             }
+            // Show a loading indicator while checking auth status.
             return const Scaffold(
               body: Center(
                 child: CircularProgressIndicator(color: AppColors.primary),

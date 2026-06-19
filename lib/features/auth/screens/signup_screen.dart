@@ -1,3 +1,8 @@
+/// The Signup screen of the application.
+/// 
+/// This screen allows new users to create an account by providing an email
+/// and password. It validates that the password and confirm password fields
+/// match before sending a request to the [AuthBloc].
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
@@ -16,10 +21,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  // Controllers for managing text input fields.
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  /// Validates input and triggers the signup event in the AuthBloc.
   void _signup() {
     if (_passwordController.text != _confirmPasswordController.text) {
       showCustomSnackBar(context, 'Passwords do not match', type: SnackBarType.error);
@@ -32,6 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
+    // Clean up controllers when the widget is removed from the tree.
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -49,9 +57,12 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
+          // Navigate to Home and clear navigation stack upon successful signup.
           if (state is Authenticated) {
             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const HomeScreen()), (route) => false);
-          } else if (state is AuthError) {
+          } 
+          // Show error message if signup fails.
+          else if (state is AuthError) {
             showCustomSnackBar(context, state.message, type: SnackBarType.error);
           }
         },

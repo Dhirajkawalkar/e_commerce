@@ -1,10 +1,21 @@
+/// Utility functions for displaying SnackBars.
+/// 
+/// This file provides a standardized way to show messages to the user
+/// using the Flutter ScaffoldMessenger, with support for different
+/// types (success, error, etc.) and styles.
 import 'package:Cartify/core/utils/snackbar_type.dart';
 import 'package:flutter/material.dart';
 
+/// Shows a custom SnackBar at the bottom of the screen.
+/// 
+/// [context] is required to find the ScaffoldMessenger.
+/// [message] is the text to display.
+/// [type] determines the color and icon of the SnackBar.
 void showCustomSnackBar(BuildContext context, String message, {SnackBarType type = SnackBarType.info}) {
   IconData icon;
   Color backgroundColor;
 
+  // Map the SnackBarType to specific visual styles.
   switch (type) {
     case SnackBarType.success:
       icon = Icons.check_circle_outline;
@@ -25,6 +36,7 @@ void showCustomSnackBar(BuildContext context, String message, {SnackBarType type
       break;
   }
 
+  // Dismiss current SnackBar before showing a new one.
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

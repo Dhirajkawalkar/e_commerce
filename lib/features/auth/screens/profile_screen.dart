@@ -1,3 +1,8 @@
+/// The Profile screen of the application.
+/// 
+/// This screen displays the user's profile information (like email) and
+/// provides options to view orders, settings, and to logout. It listens
+/// to the [AuthBloc] to handle logout navigation.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
@@ -11,6 +16,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Listen for AuthState changes to navigate back to Login if the user logs out.
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Unauthenticated) {
@@ -36,12 +42,14 @@ class ProfileScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 32),
+                // User Avatar Placeholder
                 const CircleAvatar(
                   radius: 50,
                   backgroundColor: AppColors.surface,
                   child: Icon(Icons.person, size: 60, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 16),
+                // Display the user's email from the AuthState.
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     final email = state is Authenticated ? state.email : 'Unknown User';
@@ -53,6 +61,7 @@ class ProfileScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 48),
+                // Settings/Options list.
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.surface,
@@ -84,6 +93,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
+                // Logout Button.
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     return ElevatedButton(

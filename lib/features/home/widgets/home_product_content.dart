@@ -12,6 +12,8 @@ import '../screens/section_products_screen.dart';
 import 'empty_state_view.dart';
 import 'horizontal_product_card.dart';
 
+/// [HomeProductContent] is responsible for rendering the product lists on the Home screen.
+/// it handles different states: Loading (using Skeletonizer), Error, and Loaded.
 class HomeProductContent extends StatelessWidget {
   const HomeProductContent({super.key});
 
@@ -31,6 +33,7 @@ class HomeProductContent extends StatelessWidget {
     );
   }
 
+  /// Builds a skeleton loading UI to provide better UX during data fetching.
   Widget _buildLoadingState() {
     final dummyProducts = List.generate(
       4,
@@ -83,6 +86,9 @@ class HomeProductContent extends StatelessWidget {
     );
   }
 
+  /// Builds the main UI when data is successfully loaded.
+  /// It organizes products into sections: "For You", "Popular", and "Recommended".
+  /// Also handles the search results view if a search query is present.
   Widget _buildLoadedState(BuildContext context, HomeLoaded state) {
     return RefreshIndicator(
       onRefresh: () async => context.read<HomeBloc>().add(LoadHomeData()),

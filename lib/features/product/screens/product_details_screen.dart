@@ -4,6 +4,9 @@ import '../widgets/product_actions.dart';
 import '../widgets/product_image.dart';
 import '../widgets/product_info.dart';
 
+/// [ProductDetailsScreen] provides a comprehensive view of a specific product.
+/// It shows the product image, detailed information (price, rating, description),
+/// and actions like "Add to Cart".
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
 
@@ -20,7 +23,9 @@ class ProductDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /// Displays the product's primary image with a Hero transition.
             ProductImage(product: product),
+            /// Shows textual information about the product.
             ProductInfo(
               product: product,
               description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
@@ -28,6 +33,7 @@ class ProductDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
+      /// Sticky bottom bar with primary actions for the product.
       bottomNavigationBar: ProductActions(product: product),
     );
   }

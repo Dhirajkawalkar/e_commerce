@@ -4,11 +4,14 @@ import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
 import '../screens/order_success_screen.dart';
 
+/// [OrderTotal] displays the final price and provides the "Place Order" button.
+/// When the order is placed, it clears the cart and navigates to the success screen.
 class OrderTotal extends StatelessWidget {
   const OrderTotal({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Watches the CartBloc state to update the total price in real-time.
     final state = context.watch<CartBloc>().state;
     return Column(
       children: [
@@ -32,7 +35,9 @@ class OrderTotal extends StatelessWidget {
           height: 50,
           child: ElevatedButton(
             onPressed: () {
+              // Clears the cart upon successful order placement.
               context.read<CartBloc>().add(const ClearCart());
+              // Navigate to a screen confirming the order was successful.
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const OrderSuccessScreen()),

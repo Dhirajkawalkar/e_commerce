@@ -7,6 +7,8 @@ import '../../cart/bloc/cart_bloc.dart';
 import '../../cart/bloc/cart_event.dart';
 import '../domain/entities/product.dart';
 
+/// [ProductActions] is a sticky bar at the bottom of the Product Details screen.
+/// It provides "Add to Cart" and "Buy Now" buttons.
 class ProductActions extends StatelessWidget {
   final Product product;
 
@@ -32,6 +34,7 @@ class ProductActions extends StatelessWidget {
             Expanded(
               child: OutlinedButton(
                 onPressed: () {
+                  // Adds the product to the cart without leaving the page.
                   context.read<CartBloc>().add(AddToCart(product: product));
                   showCustomSnackBar(context, '${product.name} added to cart', type: SnackBarType.success);
                 },
@@ -47,6 +50,8 @@ class ProductActions extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
+                  // In a real app, "Buy Now" might skip the cart and go to checkout.
+                  // Here, we add it to the cart as a shortcut.
                   context.read<CartBloc>().add(AddToCart(product: product));
                   showCustomSnackBar(context, '${product.name} prepared for checkout', type: SnackBarType.success);
                 },
