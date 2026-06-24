@@ -46,4 +46,4 @@ A production-level e-commerce mobile application built using Flutter, following 
 
 ## 📌 Note
 
-Currently uses mock data. Designed to easily integrate real APIs without modifying UI or business logic.
+Currently uses mock data. Designed to easily integrate real APIs without modifying UI or business logic.   
